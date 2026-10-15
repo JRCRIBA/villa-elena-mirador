@@ -24,17 +24,83 @@
     }
   };
 
-  // Restore cached quote if available
+  const STORAGE_KEY = 'villa_elena_quote_v2';
+  const TTL_MS = 24 * 60 * 60 * 1000; // Caducidad automática de 24 horas (Habeas Data & Privacidad)
+
+  // Motor de Validación y Sanitización de Seguridad (Pilares 1, 3 y 4)
+  const SecurityValidator = {
+    escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    },
+
+    validateName(name) {
+      const clean = (name || '').trim();
+      if (!clean) return { valid: false, error: 'Por favor ingresa tu nombre completo.' };
+      if (clean.length < 3 || clean.length > 60) return { valid: false, error: 'El nombre debe tener entre 3 y 60 caracteres.' };
+      const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\.\-]+$/;
+      if (!regex.test(clean)) return { valid: false, error: 'El nombre solo debe contener letras y espacios.' };
+      return { valid: true, value: clean };
+    },
+
+    validatePhone(phone) {
+      const clean = (phone || '').replace(/[\s\-\(\)]/g, '').trim();
+      if (!clean) return { valid: false, error: 'Por favor ingresa un número de teléfono o WhatsApp de contacto.' };
+      const regex = /^\+?[0-9]{7,15}$/;
+      if (!regex.test(clean)) return { valid: false, error: 'Ingresa un número telefónico válido (entre 7 y 15 dígitos).' };
+      return { valid: true, value: clean };
+    },
+
+    validateDates(checkIn, checkOut) {
+      if (!checkIn || !checkOut) return { valid: false, error: 'Por favor selecciona las fechas de llegada y salida.' };
+      const inDate = new Date(checkIn + 'T00:00:00');
+      const outDate = new Date(checkOut + 'T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (isNaN(inDate.getTime()) || isNaN(outDate.getTime())) {
+        return { valid: false, error: 'Fechas con formato inválido.' };
+      }
+      const yesterday = new Date(today.getTime() - 86400000);
+      if (inDate < yesterday) {
+        return { valid: false, error: 'La fecha de llegada no puede ser anterior al día de hoy.' };
+      }
+      if (outDate <= inDate) {
+        return { valid: false, error: 'La fecha de salida debe ser posterior a la fecha de llegada.' };
+      }
+      const diffDays = Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24));
+      if (diffDays > 30) {
+        return { valid: false, error: 'Para estancias superiores a 30 días, por favor contáctanos directamente.' };
+      }
+      return { valid: true, inDate: checkIn, outDate: checkOut, nights: diffDays };
+    },
+
+    sanitizeNotes(notes) {
+      if (!notes) return '';
+      return String(notes).slice(0, 250).trim();
+    }
+  };
+
+  // Restaurar cotización previa con verificación estricta de caducidad (TTL)
   try {
-    const savedQuote = localStorage.getItem('villa_elena_quote');
-    if (savedQuote) {
-      const parsed = JSON.parse(savedQuote);
-      if (parsed && Array.isArray(parsed.items)) {
-        state.quote = parsed;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.timestamp && (Date.now() - parsed.timestamp < TTL_MS)) {
+        if (parsed.quote && Array.isArray(parsed.quote.items)) {
+          state.quote = parsed.quote;
+        }
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
       }
     }
   } catch (e) {
-    console.warn('Could not restore quote cache', e);
+    console.warn('Could not restore quote cache safely', e);
   }
 
   // Currency Formatter COP
@@ -58,6 +124,7 @@
       'mountain': '<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',
       'trees': '<path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z"/><path d="M7 16v6"/><path d="M13 19v3"/><path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7l-3-4a1 1 0 0 0-1.6 0l-3 4a1 1 0 0 0 .8 1.7H12l-3 3.3a1 1 0 0 0 .7 1.7H12l-3 3.3a1 1 0 0 0 .7 1.7Z"/>',
       'telescope': '<path d="m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.15a1.07 1.07 0 0 1 .691-1.265l13.504-4.44"/><path d="m13.56 11.747 4.332-.924"/><path d="m16 21-3.105-6.21"/><path d="M16.485 5.94a2 2 0 0 1 1.455-2.425l1.09-.272a2 2 0 0 1 2.425 1.455l.272 1.09a2 2 0 0 1-1.455 2.425l-1.09.272a2 2 0 0 1-2.425-1.455Z"/><path d="m6 21 3.105-6.21"/><path d="M8.5 13.5 10 9"/>',
+      'copy': '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
       'utensils': '<path d="M18 2v6a3 3 0 0 1-3 3 3 3 0 0 1-3-3V2"/><path d="M15 2v10a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V2"/><path d="M15 15v7"/><path d="M9 15v7"/><path d="M6 2v6"/>',
       'flame': '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
       'wine': '<path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/>',
@@ -122,12 +189,15 @@
     }
   };
 
-  // Quote Engine State Mutators
+  // Quote Engine State Mutators con persistencia protegida (Pilar 3)
   const saveQuoteToStorage = () => {
     try {
-      localStorage.setItem('villa_elena_quote', JSON.stringify(state.quote));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        timestamp: Date.now(),
+        quote: state.quote
+      }));
     } catch (e) {
-      console.warn(e);
+      console.warn('Storage save error', e);
     }
     updateQuoteUI();
   };
@@ -252,21 +322,15 @@
     }
   };
 
-  // WhatsApp Message Generator
-  const generateWhatsAppReservation = () => {
-    const data = VILLA_ELENA_DATA.resortInfo;
+  // Helper para construir el resumen estructurado de cotización
+  const buildQuoteTextSummary = (validatedData) => {
     const total = calculateTotal();
-    const guestName = document.getElementById('quoteGuestName')?.value || 'Huésped Interesado';
-    const guestPhone = document.getElementById('quoteGuestPhone')?.value || 'Sin especificar';
-    const checkIn = document.getElementById('quoteCheckIn')?.value || 'Por definir';
-    const checkOut = document.getElementById('quoteCheckOut')?.value || 'Por definir';
+    const guestName = validatedData?.name || document.getElementById('quoteGuestName')?.value || 'Huésped Interesado';
+    const guestPhone = validatedData?.phone || document.getElementById('quoteGuestPhone')?.value || 'Sin especificar';
+    const checkIn = validatedData?.dates?.inDate || document.getElementById('quoteCheckIn')?.value || 'Por definir';
+    const checkOut = validatedData?.dates?.outDate || document.getElementById('quoteCheckOut')?.value || 'Por definir';
     const adults = document.getElementById('quoteAdults')?.value || '2';
-    const notes = document.getElementById('quoteNotes')?.value || 'Ninguna';
-
-    if (state.quote.items.length === 0) {
-      alert('Por favor selecciona al menos un servicio o glamping antes de solicitar la reserva.');
-      return;
-    }
+    const notes = SecurityValidator.sanitizeNotes(document.getElementById('quoteNotes')?.value);
 
     let itemsText = state.quote.items.map(i => `• ${i.name} (x${i.qty}) -> ${formatCOP(i.subtotal)}`).join('\n');
 
@@ -280,10 +344,149 @@
     if (notes.trim()) {
       msg += `📝 *Observaciones:* ${notes}\n`;
     }
-    msg += `\nHola Villa Elena, deseo consultar disponibilidad y los medios de pago para confirmar mi reserva. ¡Gracias!`;
+    msg += `\nHola Villa Elena, deseo consultar disponibilidad y coordinar mi reserva conforme a la cotización generada en la web. ¡Gracias!`;
 
+    return msg;
+  };
+
+  // Validación Integral de Formulario (Pilares 1, 3 y 4)
+  const validateQuoteForm = () => {
+    const errorBox = document.getElementById('quoteValidationError');
+    if (errorBox) errorBox.style.display = 'none';
+
+    if (state.quote.items.length === 0) {
+      if (errorBox) {
+        errorBox.textContent = 'Por favor selecciona al menos un glamping, pasadía o experiencia antes de solicitar la reserva.';
+        errorBox.style.display = 'block';
+      }
+      return null;
+    }
+
+    const rawName = document.getElementById('quoteGuestName')?.value;
+    const nameCheck = SecurityValidator.validateName(rawName);
+    if (!nameCheck.valid) {
+      if (errorBox) {
+        errorBox.textContent = nameCheck.error;
+        errorBox.style.display = 'block';
+      }
+      document.getElementById('quoteGuestName')?.focus();
+      return null;
+    }
+
+    const rawPhone = document.getElementById('quoteGuestPhone')?.value;
+    const phoneCheck = SecurityValidator.validatePhone(rawPhone);
+    if (!phoneCheck.valid) {
+      if (errorBox) {
+        errorBox.textContent = phoneCheck.error;
+        errorBox.style.display = 'block';
+      }
+      document.getElementById('quoteGuestPhone')?.focus();
+      return null;
+    }
+
+    const rawIn = document.getElementById('quoteCheckIn')?.value;
+    const rawOut = document.getElementById('quoteCheckOut')?.value;
+    const dateCheck = SecurityValidator.validateDates(rawIn, rawOut);
+    if (!dateCheck.valid) {
+      if (errorBox) {
+        errorBox.textContent = dateCheck.error;
+        errorBox.style.display = 'block';
+      }
+      return null;
+    }
+
+    // Validación de Consentimiento Habeas Data (Pilar 4: Cumplimiento Ley 1581)
+    const consentCheck = document.getElementById('consentHabeasData');
+    if (consentCheck && !consentCheck.checked) {
+      if (errorBox) {
+        errorBox.textContent = 'Debe autorizar el tratamiento de datos personales conforme a la Ley 1581 de 2012 para proceder con la cotización.';
+        errorBox.style.display = 'block';
+      }
+      consentCheck.focus();
+      return null;
+    }
+
+    return {
+      name: nameCheck.value,
+      phone: phoneCheck.value,
+      dates: dateCheck
+    };
+  };
+
+  // WhatsApp Message Generator con mitigaciones de seguridad
+  const generateWhatsAppReservation = () => {
+    const validated = validateQuoteForm();
+    if (!validated) return;
+
+    const data = VILLA_ELENA_DATA.resortInfo;
+    const msg = buildQuoteTextSummary(validated);
     const url = `https://api.whatsapp.com/send?phone=${data.whatsappFormatted}&text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
+  };
+
+  // Copia de Cotización al Portapapeles (Pilar 5: Alternativa ante caídas de WhatsApp)
+  const copyQuoteSummary = () => {
+    if (state.quote.items.length === 0) {
+      showToast('Tu cotización está vacía.', 'info');
+      return;
+    }
+    const validated = validateQuoteForm();
+    if (!validated) return;
+
+    const summaryText = buildQuoteTextSummary(validated);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(summaryText).then(() => {
+        showToast('Resumen copiado al portapapeles con éxito.', 'check');
+      }).catch(() => {
+        fallbackCopyText(summaryText);
+      });
+    } else {
+      fallbackCopyText(summaryText);
+    }
+  };
+
+  const fallbackCopyText = (text) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast('Resumen copiado al portapapeles.', 'check');
+    } catch (err) {
+      showToast('Por favor selecciona y copia el texto manualmente.', 'info');
+    }
+    document.body.removeChild(textArea);
+  };
+
+  // Derecho al Olvido y Purgado Seguro de Datos (Pilar 4: Privacidad)
+  const clearLocalQuoteData = () => {
+    if (confirm('¿Deseas eliminar permanentemente los datos de cotización guardados en este navegador?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('villa_elena_quote');
+      state.quote = {
+        guestName: '',
+        guestPhone: '',
+        guestEmail: '',
+        checkInDate: '',
+        checkOutDate: '',
+        adults: 2,
+        children: 0,
+        notes: '',
+        items: []
+      };
+      const nameInput = document.getElementById('quoteGuestName');
+      const phoneInput = document.getElementById('quoteGuestPhone');
+      const notesInput = document.getElementById('quoteNotes');
+      const errorBox = document.getElementById('quoteValidationError');
+      if (nameInput) nameInput.value = '';
+      if (phoneInput) phoneInput.value = '';
+      if (notesInput) notesInput.value = '';
+      if (errorBox) errorBox.style.display = 'none';
+
+      updateQuoteUI();
+      showToast('Datos locales eliminados con éxito (Derecho al Olvido).', 'trash');
+    }
   };
 
   // Accommodations Renderer
@@ -643,6 +846,8 @@
     ];
     const closeBtn = document.getElementById('closeQuoteDrawerBtn');
     const sendWABtn = document.getElementById('btnSubmitWhatsApp');
+    const copyBtn = document.getElementById('btnCopyQuoteSummary');
+    const clearBtn = document.getElementById('btnClearLocalQuote');
 
     openBtns.forEach(btn => {
       if (btn) btn.addEventListener('click', () => {
@@ -660,6 +865,60 @@
 
     sendWABtn?.addEventListener('click', () => {
       generateWhatsAppReservation();
+    });
+
+    copyBtn?.addEventListener('click', () => {
+      copyQuoteSummary();
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      clearLocalQuoteData();
+    });
+  };
+
+  // Setup Privacy Modal Controls (Habeas Data - Ley 1581 de 2012)
+  const setupPrivacyModal = () => {
+    const backdrop = document.getElementById('privacyModalBackdrop');
+    const openBtns = [
+      document.getElementById('openPrivacyPolicyBtn'),
+      document.getElementById('footerPrivacyBtn')
+    ];
+    const closeBtn = document.getElementById('closePrivacyModalBtn');
+    const acceptBtn = document.getElementById('acceptPrivacyBtn');
+
+    if (!backdrop) return;
+
+    const openModal = (e) => {
+      if (e) e.preventDefault();
+      backdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+      backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    openBtns.forEach(btn => {
+      if (btn) btn.addEventListener('click', openModal);
+    });
+
+    closeBtn?.addEventListener('click', closeModal);
+    acceptBtn?.addEventListener('click', () => {
+      const consentCheck = document.getElementById('consentHabeasData');
+      if (consentCheck) consentCheck.checked = true;
+      closeModal();
+      showToast('Autorización de tratamiento de datos confirmada.', 'shield-check');
+    });
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && backdrop.classList.contains('active')) {
+        closeModal();
+      }
     });
   };
 
@@ -785,6 +1044,7 @@
     setupQuickbar();
     setupDrawer();
     setupDroneVideoModal();
+    setupPrivacyModal();
     setupFilters();
     setupMobileNav();
     updateQuoteUI();

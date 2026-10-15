@@ -18,6 +18,11 @@
   <meta property="og:url" content="https://www.villaelenamirador.com/">
   <meta name="twitter:card" content="summary_large_image">
 
+  <!-- Security Headers & Content Security Policy (Pilar 1: Vulnerabilidades y Código Débil) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
   <!-- Atelier Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 
@@ -439,37 +444,49 @@
 
         <div>
           <h4 class="drawer-section-title">Datos del Huésped & Reserva</h4>
+          
+          <!-- Box de Errores de Validación -->
+          <div id="quoteValidationError" class="validation-error-box" style="display: none;"></div>
+
           <div style="display: flex; flex-direction: column; gap: 14px;">
             <div>
-              <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteGuestName">Nombre Completo</label>
-              <input type="text" id="quoteGuestName" placeholder="Ej. Carlos Mendoza" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
+              <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteGuestName">Nombre Completo *</label>
+              <input type="text" id="quoteGuestName" maxlength="60" placeholder="Ej. Carlos Mendoza" required autocomplete="name" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
               <div>
-                <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteGuestPhone">Teléfono / WhatsApp</label>
-                <input type="tel" id="quoteGuestPhone" placeholder="310 123 4567" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
+                <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteGuestPhone">Teléfono / WhatsApp *</label>
+                <input type="tel" id="quoteGuestPhone" maxlength="15" placeholder="Ej. 3101234567" required autocomplete="tel" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
               </div>
               <div>
                 <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteAdults">Adultos</label>
-                <input type="number" id="quoteAdults" value="2" min="1" max="30" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
+                <input type="number" id="quoteAdults" value="2" min="1" max="25" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
               <div>
-                <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteCheckIn">Fecha Ingreso</label>
-                <input type="date" id="quoteCheckIn" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
+                <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteCheckIn">Fecha Ingreso *</label>
+                <input type="date" id="quoteCheckIn" required style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
               </div>
               <div>
-                <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteCheckOut">Fecha Salida</label>
-                <input type="date" id="quoteCheckOut" style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
+                <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteCheckOut">Fecha Salida *</label>
+                <input type="date" id="quoteCheckOut" required style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px;" />
               </div>
             </div>
 
             <div>
               <label style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);" for="quoteNotes">Peticiones Especiales / Motivo</label>
-              <textarea id="quoteNotes" rows="2" placeholder="Ej: Aniversario de parejas, requerimiento vegetariano..." style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px; resize: none;"></textarea>
+              <textarea id="quoteNotes" rows="2" maxlength="250" placeholder="Ej: Aniversario de parejas, requerimiento vegetariano..." style="width: 100%; padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-top: 4px; resize: none;"></textarea>
+            </div>
+
+            <!-- Cumplimiento Normativo Habeas Data (Ley 1581 de 2012) -->
+            <div class="habeas-data-consent">
+              <label class="consent-label" for="consentHabeasData">
+                <input type="checkbox" id="consentHabeasData" />
+                <span>Autorizo el tratamiento de mis datos personales para cotización y contacto conforme a la <button type="button" id="openPrivacyPolicyBtn" class="link-privacy">Ley 1581 de 2012 (Habeas Data)</button>.</span>
+              </label>
             </div>
           </div>
         </div>
@@ -480,12 +497,26 @@
           <span class="total-label">Total Cotizado:</span>
           <span class="total-amount" id="drawerTotalAmount">$0</span>
         </div>
+        
         <button id="btnSubmitWhatsApp" class="btn btn-whatsapp" style="width: 100%; padding: 14px; font-size: 1rem;">
           <svg class="lucide" viewBox="0 0 24 24"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
           <span>Enviar Solicitud a WhatsApp</span>
         </button>
-        <p style="text-align: center; font-size: 0.76rem; color: var(--text-muted);">
-          Sin cobros automáticos en tarjeta. Te confirmamos disponibilidad y coordinamos anticipo del 50%.
+
+        <!-- Canales Alternativos de Mitigación (Pilar 5: Respaldo y Contingencia) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+          <button id="btnCopyQuoteSummary" type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 10px 12px;" title="Copiar texto de cotización al portapapeles sin pasar por WhatsApp">
+            <svg class="lucide" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copiar Resumen</span>
+          </button>
+          <button id="btnClearLocalQuote" type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 10px 12px; color: #dc2626;" title="Derecho al Olvido: Elimina los datos de cotización de este equipo">
+            <svg class="lucide" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            <span>Borrar mis datos</span>
+          </button>
+        </div>
+
+        <p style="text-align: center; font-size: 0.74rem; color: var(--text-muted); line-height: 1.4;">
+          🔒 Conexión cifrada TLS 1.3. Tus datos no se transfieren a terceros ni se almacenan en servidores no autorizados.
         </p>
       </div>
     </div>
@@ -527,8 +558,9 @@
             Vereda Marcura, Sector Mirador<br>
             Paipa, Boyacá, Colombia<br>
             Altitud: 2.525 m.s.n.m.<br>
-            WhatsApp: +57 312 345 6789<br>
-            Email: reservas@villaelenamirador.com
+            Línea Celular: <a href="tel:+573123456789" style="color: var(--accent-forest); font-weight: 600;">+57 312 345 6789</a><br>
+            WhatsApp Oficial: <a href="https://api.whatsapp.com/send?phone=573123456789" target="_blank" style="color: var(--accent-forest); font-weight: 600;">Chat Directo</a><br>
+            Email: <a href="mailto:reservas@villaelenamirador.com" style="color: var(--accent-forest); text-decoration: underline;">reservas@villaelenamirador.com</a>
           </p>
         </div>
 
@@ -546,10 +578,59 @@
 
       <div class="footer-bottom">
         <span>© 2026 Villa Elena Mirador & Eco-Resort. Todos los derechos reservados.</span>
-        <span>Desarrollado bajo Spec-Driven Development (SDD) & Atelier Design System.</span>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <button type="button" id="footerPrivacyBtn" class="link-privacy">Política de Privacidad & Habeas Data (Ley 1581/2012)</button>
+          <span>Desarrollado bajo Spec-Driven Development (SDD) & Atelier Design System.</span>
+        </div>
       </div>
     </div>
   </footer>
+
+  <!-- Modal de Política de Tratamiento de Datos Personales (Habeas Data - Ley 1581 de 2012) -->
+  <div class="privacy-modal-backdrop" id="privacyModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+    <div class="privacy-modal-dialog">
+      <div class="privacy-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="brand-emblem" style="width: 32px; height: 32px;">
+            <svg class="lucide" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div>
+            <h3 class="privacy-modal-title" id="privacyModalTitle">Política de Tratamiento de Datos & Habeas Data</h3>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">Cumplimiento Ley Estatutaria 1581 de 2012 y Decreto 1377 de 2013</span>
+          </div>
+        </div>
+        <button id="closePrivacyModalBtn" class="icon-btn" aria-label="Cerrar modal">
+          <svg class="lucide" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="privacy-modal-body">
+        <h4>1. Responsable del Tratamiento</h4>
+        <p><strong>Villa Elena Mirador & Eco-Resort</strong>, con domicilio en la Vereda Marcura, sector El Mirador, municipio de Paipa, Boyacá, Colombia. Correo de atención: <code>reservas@villaelenamirador.com</code>. Línea de atención: <code>+57 312 345 6789</code>.</p>
+
+        <h4>2. Finalidad de la Recolección de Datos</h4>
+        <p>Los datos suministrados voluntariamente por el usuario (Nombre, Teléfono, Fechas estimadas y requerimientos) serán tratados exclusivamente para:</p>
+        <ul>
+          <li>Elaboración, cálculo y emisión de cotizaciones de hospedaje, pasadías y experiencias solicitadas.</li>
+          <li>Comunicación directa vía WhatsApp, llamada o correo electrónico para verificar disponibilidad y coordinar la reserva.</li>
+          <li>Atención de requerimientos logísticos específicos (dietas, aniversarios, movilidad).</li>
+        </ul>
+
+        <h4>3. Medidas de Seguridad & No Transferencia</h4>
+        <p>Villa Elena Mirador <strong>no vende, no alquila, no comparte ni comercializa</strong> los datos personales recolectados con terceras partes o anunciantes. Esta página web funciona bajo protocolo seguro <strong>HTTPS con cifrado TLS 1.3</strong>. Los datos temporales de cotización permanecen en la memoria local del navegador del usuario bajo una política de caducidad automática de 24 horas.</p>
+
+        <h4>4. Derechos del Titular (Derechos ARCO)</h4>
+        <p>Conforme a la legislación colombiana, el titular de los datos tiene derecho a: <strong>Conocer</strong>, <strong>Actualizar</strong>, <strong>Rectificar</strong> y solicitar la <strong>Supresión</strong> de sus datos personales de nuestras bases de contacto, así como revocar la autorización otorgada en cualquier momento mediante solicitud a <code>reservas@villaelenamirador.com</code>.</p>
+
+        <h4>5. Derecho al Olvido en este Dispositivo</h4>
+        <p>Puede purgar inmediatamente cualquier rastro de cotización guardado en el navegador de su dispositivo haciendo clic en el botón <em>"Borrar mis datos"</em> disponible en el panel de cotización.</p>
+      </div>
+
+      <div class="privacy-modal-footer">
+        <button id="acceptPrivacyBtn" class="btn btn-primary" style="padding: 10px 24px;">Entendido y Acepto</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Cinematic Drone Video Modal -->
   <div class="video-modal-backdrop" id="videoModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
