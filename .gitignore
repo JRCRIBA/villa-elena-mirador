@@ -1,0 +1,15 @@
+# Raw heavy archives and extracted unsorted media
+assets/images/
+*.zip
+*.tar.gz
+
+# Python & runtime caches
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
