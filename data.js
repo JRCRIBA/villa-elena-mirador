@@ -7,15 +7,28 @@
 const VILLA_ELENA_DATA = {
   resortInfo: {
     name: "Villa Elena Mirador",
-    subtitle: "Glamping, Astro-Turismo & Experiencias de Bienestar",
-    location: "Paipa, Boyacá, Colombia",
+    subtitle: "El Lujo de Volver a Ti · Glamping, Astro-Turismo & Bienestar",
+    location: "Vereda Marcura, Paipa, Boyacá, Colombia (a 15 min del Lago Sochagota)",
     altitude: "2.525 m.s.n.m.",
-    viewpoint: "Vista panorámica al Lago Sochagota y Serranía de Marcura",
-    phone: "+57 312 345 6789", // Línea WhatsApp de Atención
+    viewpoint: "Mirador Sensorial de 5m con vista panorámica 180° al Lago Sochagota",
+    phone: "+57 312 345 6789",
     whatsappFormatted: "573123456789",
     email: "reservas@villaelenamirador.com",
-    tagline: "Un espacio para mirar hacia adentro y reconectar con lo que realmente importa.",
-    description: "La ruta experiencial de Villa Elena Mirador busca una conexión constante con el entorno natural y la cultura local como vía de desconexión del afán de la vida diaria, mediante una experiencia de 24 horas inmerso en la serenidad andina.",
+    instagram: "@mirador_villaelena",
+    instagramUrl: "https://www.instagram.com/mirador_villaelena",
+    tagline: "El lujo de volver a ti",
+    subtagline: "Redefiniendo el lujo: Presencia. Experiencias significativas. Descanso real.",
+    triad: [
+      { label: "Terrenal", icon: "sprout", desc: "Aromaterapia viva (menta, romero, lavanda), jacuzzis térmicos y senderos hacia el páramo." },
+      { label: "Cósmico", icon: "sparkles", desc: "Telescopio astronómico en la cúspide del mirador de 5m bajo el cielo limpio de Marcura." },
+      { label: "Sostenible", icon: "globe", desc: "Turismo regenerativo, empleo rural en Paipa y programa 'Deja tu Huella' con siembra de árboles." }
+    ],
+    story: "Villa Elena nació con un propósito claro: crear una verdadera experiencia de conexión interior a través del contacto con la naturaleza. No es solo un lugar de hospedaje; es la promesa de una mujer que transformó una vivencia difícil en una oportunidad de vida y servicio, generando empleo para la comunidad de la vereda Marcura y cuidando los bosques que abrazan el Páramo de la Ranchería. Un respiro necesario para bajar el ritmo y volver a escuchar lo que realmente importa.",
+    attractions: {
+      mirador5m: "Mirador sensorial de 5 metros de altura con jardín aromático de menta, romero y lavanda y telescopio astronómico.",
+      juegosMadera: "Columpios panorámicos gigantes y sube y baja en madera frente al espejo del Lago Sochagota.",
+      talleresHolisticos: "Talleres guiados de Mindfulness, PNL, tomas de cacao y mesas familiares de madera para dinámicas grupales."
+    },
     checkIn: "15:00",
     checkOut: "13:00"
   },

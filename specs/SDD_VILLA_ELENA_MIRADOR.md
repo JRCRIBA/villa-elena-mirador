@@ -1,21 +1,27 @@
 # 📐 ESPECIFICACIÓN TÉCNICA FORMAL (SDD) - ARQUITECTURA INTEGRAL Y SISTEMA EXPERIENCIAL
 # Proyecto: VILLA ELENA MIRADOR & ECO-RESORT (Paipa, Boyacá)
-# Versión del Documento: 1.0.0 (Single Source of Truth - SSOT)
-# Fecha de Emisión: 2026-10-15
+# Versión del Documento: 1.1.0 (Single Source of Truth - SSOT)
+# Fecha de Actualización: 2026-10-17
 # Autoridad: Spec-Driven Development (SDD) Lead Architect & Brand Experience Strategist
 
 ---
 
 ## 1. Declaración de Misión y Posicionamiento de Marca (Brand Strategy)
 
-### 1.1. Declaración de Posicionamiento (Brand Positioning Statement)
-> Para **parejas, viajeros conscientes, grupos de bienestar y familias** que anhelan una pausa restauradora frente a la saturación del ritmo urbano, **Villa Elena Mirador** es un **destino experiencial de ecoturismo y glamping de alta gama** ubicado en Paipa (Boyacá), que ofrece una **reconexión holística las 24 horas del día** articulando alojamiento inmersivo en carpas y domos geodésicos, gastronomía tradicional y de autor, astro-turismo con cosmovisión muisca y programas de reforestación activa. A diferencia de hospedajes rurales convencionales o glampings aislados sin propuesta de contenido, Villa Elena entrega una **ruta de bienestar guiada integral** ("Mirar hacia adentro y reconectar con lo que realmente importa") sustentada en vistas panorámicas al Lago Sochagota y al Páramo de la Ranchería.
+### 1.1. Declaración de Posicionamiento Oficial
+> **Lema Insignia:** *"El lujo de volver a ti"*  
+> **Definición de Marca:** *"Redefiniendo el lujo: Presencia. Experiencias significativas. Descanso real."*  
+> Para **parejas, viajeros conscientes, grupos de bienestar y familias** que anhelan una pausa restauradora frente a la saturación del ritmo urbano, **Villa Elena Mirador** es un **destino ecoturístico y santuario de bienestar holístico** ubicado en la vereda Marcura a solo 15 minutos de Paipa (Boyacá), que ofrece una **reconexión multisensorial**: desde la sanación en la tierra hasta la contemplación del cosmos. A diferencia de hospedajes rurales convencionales o glampings aislados sin propuesta de contenido, Villa Elena entrega una **ruta de bienestar guiada en 3 dimensiones** sustentada en su mirador sensorial de 5 metros con aromaterapia viva, astroturismo con telescopio y vistas panorámicas al Lago Sochagota.
 
-### 1.2. Pilares Estratégicos de Marca (Distinctive Brand Pillars)
-1. **Bio-Conexión y Reforestación:** Programa "Deja tu Huella" (siembra activa de árboles nativos) y conservación del corredor biológico Laguna de Marcura - Páramo de la Ranchería.
-2. **Astro-Turismo & Raigambre Muisca:** Observación estelar con telescopios de precisión y rescate de la memoria ancestral del territorio sagrado de Marcura.
-3. **Alta Hospitalidad & Bienestar Sensorial:** Rutas de aromaterapia, sonidoterapia con cuencos tibetanos, yoga al aire libre y spa botánico herbal.
-4. **Gastronomía Consciente & Terruño Boyacense:** Rescate de amasijos ancestrales, arepas en tiesto, catas de Queso Paipa con Denominación de Origen (D.O.), café de altura y maridajes al atardecer.
+### 1.2. Triada Estratégica de Experiencia (Distinctive Pillars)
+1. **🌱 Dimensión Terrenal (Día):** Mirador sensorial elevado de 5 metros con jardín vivo de menta, romero y lavanda (aromaterapia y respiración consciente), hidroterapia en jacuzzis, caminatas ecológicas por la vereda Marcura y programa de reforestación *"Deja tu Huella"*.
+2. **✦ Dimensión Cósmica (Noche):** Astroturismo guiado con telescopio de alta precisión instalado en la cúspide del mirador de 5 metros, cosmovisión estelar y contemplación del firmamento andino.
+3. **🌐 Dimensión Emocional & Sostenible:** Talleres guiados de Mindfulness y PNL, tomas de cacao, mesas familiares de madera para dinámicas grupales, junto a columpios gigantes y sube y baja panorámicos en madera para revivir el juego y generar recuerdos memorables.
+
+### 1.3. Identidad Visual & Assets Canónicos de Marca
+- **Isotipo Canónico:** Ave andina nativa coronada posada sobre rama botánica (`assets/brand/brand_bird_badge.png`), integrado en Header y Footer junto a la tipografía display del resort.
+- **Imagotipo Completo:** Emblema con lettering botánico y remates florales (`assets/brand/logo_villa_elena_completo.png`).
+- **Canal Oficial Instagram:** `@mirador_villaelena` (`https://www.instagram.com/mirador_villaelena`).
 
 ---
 
